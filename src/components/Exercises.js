@@ -2,23 +2,11 @@ import { Box, Pagination, Stack, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { fetchData, exerciseOptions } from '../utils/fetchData';
 import ExerciseCard from './ExerciseCard';
-
+import Loader from './Loader';
 const Exercises = ({ exercises, setExercises, bodyPart }) => {
   // console.log(exercises);
   const [currentPage, setCurrentPage] = useState(1);
-  const exercisesPerPage = 9;
-
-  const indexOfLastExercise = currentPage * exercisesPerPage;
-  const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
-  const currentExercises = exercises.slice(
-    indexOfFirstExercise,
-    indexOfLastExercise
-  );
-  const paginate = (e, value) => {
-    setCurrentPage(value);
-
-    window.scrollTo({ top: 1800, behavior: 'smooth' });
-  };
+  const [exercisesPerPage] = useState(6);
 
   useEffect(() => {
     const fetchExercisesData = async () => {
@@ -35,12 +23,31 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
           exerciseOptions
         );
       }
+
       setExercises(exercisesData);
     };
+
     fetchExercisesData();
   }, [bodyPart, setExercises]);
+
+  // pagination
+  const indexOfLastExercise = currentPage * exercisesPerPage;
+  const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
+  const currentExercises = exercises?.slice(
+    indexOfFirstExercise,
+    indexOfLastExercise
+  );
+
+  const paginate = (event, value) => {
+    setCurrentPage(value);
+
+    window.scrollTo({ top: 1800, behavior: 'smooth' });
+  };
+
+  if (!currentExercises.length) return <Loader />;
+
   return (
-    <Box id="Exercises" sx={{ mt: { lg: '110px' } }} mt="50px" p="20px">
+    <Box id="exercises" sx={{ mt: { lg: '110px' } }} mt="50px" p="20px">
       <Typography variant="h4" mb="46px">
         Showing Results
       </Typography>
